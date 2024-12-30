@@ -1,5 +1,6 @@
-from bs4 import BeautifulSoup
 import requests
+import json
+from bs4 import BeautifulSoup
 
 url = "https://www.dyson.com.tr/airwrap-id-multi-styler-dryer-straight-wavy-vinca-blue-topaz"
 headers = {
@@ -10,7 +11,7 @@ response = requests.get(url, headers=headers)
 
 if response.status_code == 200:
     soup = BeautifulSoup(response.text, 'html.parser')
-    
+
     # Tüm script taglarını kontrol et
     script_tags = soup.find_all("script")
     for script in script_tags:
@@ -18,6 +19,17 @@ if response.status_code == 200:
             json_start = script.text.find('{')  # JSON başlangıç
             json_end = script.text.rfind('}') + 1  # JSON bitiş
             json_data = script.text[json_start:json_end]
-            print("JSON Data:", json_data)  # JSON'u yazdır
+            
+            try:
+                # JSON'u ayrıştır
+                data = json.loads(json_data)
+
+                # is_available anahtarını bul
+                is_available = data["*"]["Magento_Catalog/js/product/view/provider"]["data"]["items"]["57600"]["is_available"]
+
+                # Sonucu yazdır
+                print(f"Product is available: {is_available}")
+            except (json.JSONDecodeError, KeyError) as e:
+                print("Error parsing JSON or finding 'is_available':", e)
 else:
     print(f"Failed to fetch the page. Status code: {response.status_code}")
