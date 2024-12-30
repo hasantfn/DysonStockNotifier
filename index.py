@@ -2,9 +2,7 @@ import requests
 import json
 from bs4 import BeautifulSoup
 
-
 url = "https://www.dyson.com.tr/products/wet-dry-vacuums/dyson-v15-detect-submarine/overview/dyson-v15s-detect-submarine-sari-nikel"
-
 
 def check_availability(url):
     headers = {
